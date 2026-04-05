@@ -1,0 +1,58 @@
+@echo off
+REM Quick Start PostgreSQL with Docker for Appointment Booking System
+REM This script starts a PostgreSQL container ready to use
+
+echo.
+echo ============================================
+echo Starting PostgreSQL with Docker...
+echo ============================================
+echo.
+
+REM Check if Docker is running
+docker info >nul 2>&1
+if %ERRORLEVEL% NEQ 0 (
+    echo ERROR: Docker is not running!
+    echo Please start Docker Desktop and try again.
+    pause
+    exit /b 1
+)
+
+REM Stop and remove existing container if it exists
+echo Cleaning up old containers...
+docker stop postgres-app >nul 2>&1
+docker rm postgres-app >nul 2>&1
+
+REM Start new PostgreSQL container
+echo Creating PostgreSQL container...
+docker run --name postgres-app ^
+  -e POSTGRES_PASSWORD=root ^
+  -e POSTGRES_DB=appointment-booking ^
+  -p 5432:5432 ^
+  -d postgres:latest
+
+if %ERRORLEVEL% EQ 0 (
+    echo.
+    echo ============================================
+    echo PostgreSQL is running!
+    echo ============================================
+    echo.
+    echo Database Details:
+    echo   Host:     localhost
+    echo   Port:     5432
+    echo   Username: postgres
+    echo   Password: root
+    echo   Database: appointment-booking
+    echo.
+    echo Waiting for PostgreSQL to be ready (10 seconds)...
+    timeout /t 10 /nobreak
+    echo.
+    echo You can now start the API server:
+    echo   go run .
+    echo.
+) else (
+    echo ERROR: Failed to start PostgreSQL container
+    pause
+    exit /b 1
+)
+
+pause

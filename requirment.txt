@@ -1,0 +1,79 @@
+Backend Developer Assignment
+Objective
+Design and build a RESTful APIfor a simple appointment booking system. The platform connects coaches with users who want to
+book 30-minute appointmentslots. Thistask will assess your ability to design a system, model data, build APIs, and handle core
+businesslogic.
+CoreRequirements
+You are to build the backend service that powersthis booking system. A coach should be able to settheir availability, and a user
+should be able to book an available slot.
+1. Functional Requirements
+● Coach Availability: A coach must be able to define their available hoursfor any day of the week. For example, Coach Ais
+available onMondaysfrom10:00 AM to 3:00 PMand
+Wednesdays from 9:00 AM to 12:00 PM.
+● View Available Slots: A usershould be able to query the system to see all available 30-minute booking slots for a
+specific coach on a given day.
+● Book an Appointment: A user must be able to book one of the available 30-minute slots with a coach.
+● No Double Booking: Once a slot is booked, it must no longer appear as available. The system should prevent the same slot
+from being booked by two different users.
+● View Booked Appointments: A user should be able to see a list of all the appointments they have booked.
+2. API Endpoints
+You should design and implement a RESTful API to support the functional requirements. Here is a suggested list of endpoints. You
+are free to modify themif you have a befler design in mind.
+● POST /coaches/availability
+○ Action: Allows a coach to set their weekly availability.
+○ Request Body: Could include coach_id, day_of_week, start_time, end_time.
+○ Example:{"coach_id": 1, "day": "Tuesday", "start_time": "09:00", "end_time":
+"14:00"}
+● GET /users/slots
+○ Action: Fetches all available 30-minute slots for a given coach on a specific day.
+○ Query Params: coach_id, date (e.g., 2025-10-28).
+○ Success Response: An array of available time slots, e.g., ["2025-10-28T09:00:00Z",
+"2025-10-28T09:30:00Z", ...]
+● POST /users/bookings
+○ Action: Allows a user to book an appointment.
+○ Request Body: Should include user_id, coach_id, and the exact datetime of the slot
+being booked.
+○ Example: {"user_id": 101, "coach_id": 1, "datetime": "2025-10-28T09:30:00Z"}
+● GET /users/bookings
+○ Action: Fetches all upcoming appointments for a given user.
+○ Query Params: user_id.
+○ Success Response: An array of booking objects, including details about the coach
+and the time.
+Bonus Features
+If you have extra time, consider implementing one or more of the following to showcase your skills further:
+● Cancellation: Add an endpoint for a user to cancel a booking.
+● Timezones: Handle timezones gracefully. Assume the coach and user might be in
+different timezones.
+● Concurrency:How would yoursystemhandle two userstrying to book the exactsame slot at the exact same time?
+Implement a solution (e.g., using database transactions with
+row-level locking) to prevent this race condition.
+● Testing: Write unit or integration tests for your API endpoints and business logic.
+Technical Specifications
+● Language/Framework: Use any backend language and framework you are comfortable with.
+● Database: Use any relational database you prefer.
+● Code: Your code should be well-structured, clean, and maintainable.
+Submission
+Please provide the following:
+1. A link to a Git repository (e.g., GitHub, GitLab) with your complete source code.
+2. A README.md file that includes:
+○ A brief explanation of your design choices and any assumptions you made.
+○ Clear,step-by-step instructions on how to set up and run the projectlocally
+(including installing dependencies, sefling up the database, and starting the server).
+3. API documentation. This can be a Postman collection, a Swagger/OpenAPI file, or a simple markdown file describing
+each endpoint, its expected request format, and
+possible responses.
+Evaluation Criteria
+We will be evaluating your submission based on the following criteria:
+● Correctness: Does the application meet all the core functional requirements?
+● Problem Solving: How did you model the data? How did you generate the available slots
+based on the coach'sschedule and existing bookings?
+● Code Quality: Is the code clean, well-organized, and easy to understand?
+● API Design: Are the APIs well-designed, RESTful, and consistent? Isinput validation and
+error handling implemented correctly?
+● Documentation: Isthe project easy to understand,set up, and use, thanks to your documentation?
+AI Usage Disclosure
+You are allowed to use AI tools (such as ChatGPT, Copilot, etc.) while working on this assignment.
+However, if you use any AI assistance, please ensure the following:
+● Share the complete conversation/log (prompt + responses) along with your submission.
+● Clearly highlight which parts of the solution were AI-assisted.
+● Ensure you fully understand the code and design, as you will be asked to explain your approach during follow-up discussions.

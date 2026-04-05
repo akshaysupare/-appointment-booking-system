@@ -1,0 +1,584 @@
+{
+  "info": {
+    "_postman_id": "appointment-booking-api",
+    "name": "Appointment Booking System API",
+    "description": "Production-ready REST API for managing appointment bookings between coaches and users.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Base URL Setup",
+      "item": [
+        {
+          "name": "Environment Variables Info",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users/slots",
+              "host": ["{{base_url}}"],
+              "path": ["users", "slots"]
+            },
+            "description": "Set up your environment variables:\n- base_url: http://localhost:8080\n- coach_id: 1\n- user_id: 1\n- booking_date: 2025-10-28"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Coach Management",
+      "item": [
+        {
+          "name": "Set Coach Availability",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"coach_id\": 1,\n  \"day\": \"Monday\",\n  \"start_time\": \"09:00\",\n  \"end_time\": \"17:00\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/coaches/availability",
+              "host": ["{{base_url}}"],
+              "path": ["coaches", "availability"]
+            },
+            "description": "Set or update a coach's weekly availability for a specific day.\n\n**Parameters:**\n- coach_id: Coach ID (must exist)\n- day: Weekday name (Monday-Sunday)\n- start_time: Start time in HH:MM format\n- end_time: End time in HH:MM format (must be after start_time)\n\n**Response:** 201 Created"
+          },
+          "response": [
+            {
+              "name": "201 Success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"coach_id\": 1,\n  \"day\": \"Monday\",\n  \"start_time\": \"09:00\",\n  \"end_time\": \"17:00\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/coaches/availability",
+                  "host": ["{{base_url}}"],
+                  "path": ["coaches", "availability"]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"Availability set successfully\"\n}"
+            },
+            {
+              "name": "400 Bad Request",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"coach_id\": 1,\n  \"day\": \"InvalidDay\",\n  \"start_time\": \"09:00\",\n  \"end_time\": \"17:00\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/coaches/availability",
+                  "host": ["{{base_url}}"],
+                  "path": ["coaches", "availability"]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"Invalid day. Use valid weekday (Monday-Sunday)\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "User Slots & Bookings",
+      "item": [
+        {
+          "name": "Get Available Slots",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users/slots?coach_id={{coach_id}}&date=2025-10-28",
+              "host": ["{{base_url}}"],
+              "path": ["users", "slots"],
+              "query": [
+                {
+                  "key": "coach_id",
+                  "value": "{{coach_id}}"
+                },
+                {
+                  "key": "date",
+                  "value": "2025-10-28"
+                }
+              ]
+            },
+            "description": "Get all available 30-minute slots for a coach on a specific date.\n\n**Query Parameters:**\n- coach_id: Coach ID (required)\n- date: Date in YYYY-MM-DD format (required)\n\n**Response:** 200 OK\n- Returns array of available slots in UTC ISO8601 format\n- Empty array [] if no availability for that day or all slots booked"
+          },
+          "response": [
+            {
+              "name": "200 Success with slots",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/users/slots?coach_id=1&date=2025-10-28",
+                  "host": ["{{base_url}}"],
+                  "path": ["users", "slots"],
+                  "query": [
+                    {
+                      "key": "coach_id",
+                      "value": "1"
+                    },
+                    {
+                      "key": "date",
+                      "value": "2025-10-28"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  \"2025-10-28T09:00:00Z\",\n  \"2025-10-28T09:30:00Z\",\n  \"2025-10-28T10:00:00Z\",\n  \"2025-10-28T10:30:00Z\",\n  \"2025-10-28T11:00:00Z\",\n  \"2025-10-28T11:30:00Z\",\n  \"2025-10-28T12:00:00Z\",\n  \"2025-10-28T12:30:00Z\",\n  \"2025-10-28T13:00:00Z\",\n  \"2025-10-28T13:30:00Z\"\n]"
+            },
+            {
+              "name": "200 No slots available",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/users/slots?coach_id=1&date=2025-12-25",
+                  "host": ["{{base_url}}"],
+                  "path": ["users", "slots"],
+                  "query": [
+                    {
+                      "key": "coach_id",
+                      "value": "1"
+                    },
+                    {
+                      "key": "date",
+                      "value": "2025-12-25"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[]"
+            }
+          ]
+        },
+        {
+          "name": "Book a Slot",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": 1,\n  \"coach_id\": 1,\n  \"datetime\": \"2025-10-28T09:30:00Z\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/users/bookings",
+              "host": ["{{base_url}}"],
+              "path": ["users", "bookings"]
+            },
+            "description": "Book a 30-minute slot for a user with a coach.\n\n**Request Body:**\n- user_id: User ID (must exist)\n- coach_id: Coach ID (must exist)\n- datetime: Booking time in RFC3339 format (must be within coach availability)\n\n**Concurrency:** Uses database transactions with row-level locking to prevent double-bookings.\n\n**Response Codes:**\n- 201 Created: Booking successful\n- 400 Bad Request: Invalid data or slot not within availability\n- 404 Not Found: User or coach not found\n- 409 Conflict: Slot already booked"
+          },
+          "response": [
+            {
+              "name": "201 Booking Confirmed",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"user_id\": 1,\n  \"coach_id\": 1,\n  \"datetime\": \"2025-10-28T09:30:00Z\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/users/bookings",
+                  "host": ["{{base_url}}"],
+                  "path": ["users", "bookings"]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"Booking confirmed\",\n  \"booking_id\": 5\n}"
+            },
+            {
+              "name": "409 Slot Already Booked",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"user_id\": 1,\n  \"coach_id\": 1,\n  \"datetime\": \"2025-10-28T09:30:00Z\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/users/bookings",
+                  "host": ["{{base_url}}"],
+                  "path": ["users", "bookings"]
+                }
+              },
+              "status": "Conflict",
+              "code": 409,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"slot already booked\"\n}"
+            },
+            {
+              "name": "400 Slot Not Within Availability",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"user_id\": 1,\n  \"coach_id\": 1,\n  \"datetime\": \"2025-10-30T09:30:00Z\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/users/bookings",
+                  "host": ["{{base_url}}"],
+                  "path": ["users", "bookings"]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"slot not within coach availability\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get User Bookings",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users/bookings?user_id={{user_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["users", "bookings"],
+              "query": [
+                {
+                  "key": "user_id",
+                  "value": "{{user_id}}"
+                }
+              ]
+            },
+            "description": "Get all confirmed bookings for a user, sorted by time.\n\n**Query Parameters:**\n- user_id: User ID (required)\n\n**Response:** 200 OK\n- Returns array of confirmed bookings\n- Includes coach name and full booking details\n- Empty array if no bookings"
+          },
+          "response": [
+            {
+              "name": "200 Bookings Found",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/users/bookings?user_id=1",
+                  "host": ["{{base_url}}"],
+                  "path": ["users", "bookings"],
+                  "query": [
+                    {
+                      "key": "user_id",
+                      "value": "1"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"booking_id\": 5,\n    \"coach_id\": 1,\n    \"coach_name\": \"Coach A\",\n    \"slot_time\": \"2025-10-28T09:30:00Z\",\n    \"status\": \"confirmed\"\n  },\n  {\n    \"booking_id\": 6,\n    \"coach_id\": 2,\n    \"coach_name\": \"Coach B\",\n    \"slot_time\": \"2025-10-29T10:00:00Z\",\n    \"status\": \"confirmed\"\n  }\n]"
+            },
+            {
+              "name": "200 No Bookings",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/users/bookings?user_id=999",
+                  "host": ["{{base_url}}"],
+                  "path": ["users", "bookings"],
+                  "query": [
+                    {
+                      "key": "user_id",
+                      "value": "999"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[]"
+            }
+          ]
+        },
+        {
+          "name": "Cancel Booking",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users/bookings/5?user_id={{user_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["users", "bookings", "5"],
+              "query": [
+                {
+                  "key": "user_id",
+                  "value": "{{user_id}}"
+                }
+              ]
+            },
+            "description": "Cancel an existing booking by setting status to 'cancelled'.\n\n**Path Parameters:**\n- booking_id: Booking ID (in URL path)\n\n**Query Parameters:**\n- user_id: User ID for ownership verification (required)\n\n**Logic:**\n1. Finds the booking by ID\n2. Verifies it belongs to the specified user\n3. Sets booking status to 'cancelled'\n4. The slot becomes available for other users to book\n\n**Response Codes:**\n- 200 OK: Cancellation successful\n- 400 Bad Request: Invalid IDs\n- 403 Forbidden: Booking belongs to different user\n- 404 Not Found: Booking not found"
+          },
+          "response": [
+            {
+              "name": "200 Cancellation Successful",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/users/bookings/5?user_id=1",
+                  "host": ["{{base_url}}"],
+                  "path": ["users", "bookings", "5"],
+                  "query": [
+                    {
+                      "key": "user_id",
+                      "value": "1"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"Booking cancelled successfully\"\n}"
+            },
+            {
+              "name": "403 Unauthorized",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/users/bookings/5?user_id=999",
+                  "host": ["{{base_url}}"],
+                  "path": ["users", "bookings", "5"],
+                  "query": [
+                    {
+                      "key": "user_id",
+                      "value": "999"
+                    }
+                  ]
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"unauthorized\"\n}"
+            },
+            {
+              "name": "404 Booking Not Found",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/users/bookings/9999?user_id=1",
+                  "host": ["{{base_url}}"],
+                  "path": ["users", "bookings", "9999"],
+                  "query": [
+                    {
+                      "key": "user_id",
+                      "value": "1"
+                    }
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"booking not found\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Test Scenarios",
+      "item": [
+        {
+          "name": "Scenario 1: Complete Booking Flow",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users/slots",
+              "host": ["{{base_url}}"],
+              "path": ["users", "slots"]
+            },
+            "description": "**Complete User Journey:**\n\n1. **Set Coach Availability** (POST /coaches/availability)\n   - Coach defines when they're available\n   - Example: Monday 9 AM - 5 PM\n\n2. **View Available Slots** (GET /users/slots)\n   - User queries for available 30-min slots\n   - Example: October 28, 2025\n\n3. **Book a Slot** (POST /users/bookings)\n   - User selects and books a specific time\n   - Transaction-based locking prevents double-booking\n\n4. **View My Bookings** (GET /users/bookings)\n   - User sees all their confirmed appointments\n   - Shows coach name and timing\n\n5. **Cancel if Needed** (DELETE /users/bookings/:id)\n   - User can cancel and free up the slot\n   - Slot becomes available for others\n\n**Test with seed data:**\n- Coach IDs: 1 (Coach A), 2 (Coach B)\n- User IDs: 1 (Alice), 2 (Bob)\n- Available dates: Check Coach availability"
+          }
+        },
+        {
+          "name": "Scenario 2: Concurrency Test",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": 1,\n  \"coach_id\": 1,\n  \"datetime\": \"2025-10-28T09:30:00Z\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/users/bookings",
+              "host": ["{{base_url}}"],
+              "path": ["users", "bookings"]
+            },
+            "description": "**Test Concurrency (Race Condition Prevention):**\n\nTo verify the booking system prevents double-bookings:\n\n1. **Manual test:**\n   - Open this request twice in separate tabs\n   - Click Send on both simultaneously\n   - Result: One gets 201, one gets 409 (Conflict)\n\n2. **Automated test with Newman:**\n   ```bash\n   for i in {1..10}; do\n     curl -X POST http://localhost:8080/users/bookings \\\n       -H \"Content-Type: application/json\" \\\n       -d '{\"user_id\": 1, \"coach_id\": 1, \"datetime\": \"2025-10-28T09:30:00Z\"}' &\n   done\n   wait\n   ```\n   Result: Only ONE booking succeeds, rest get 409\n\n3. **Tool: Apache Bench**\n   ```bash\n   echo '{\"user_id\": 1, \"coach_id\": 1, \"datetime\": \"2025-10-28T10:00:00Z\"}' > request.json\n   ab -n 100 -c 10 -p request.json -T application/json http://localhost:8080/users/bookings\n   ```\n\n**Database locking mechanism:**\n- Uses PostgreSQL transactions\n- Row-level locking during booking check\n- Atomic read-then-write operation\n- See source: services/booking.go"
+          }
+        },
+        {
+          "name": "Scenario 3: Error Handling",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": 999,\n  \"coach_id\": 1,\n  \"datetime\": \"2025-10-28T09:30:00Z\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/users/bookings",
+              "host": ["{{base_url}}"],
+              "path": ["users", "bookings"]
+            },
+            "description": "**Test Error Scenarios:**\n\n**Test 1: User not found**\n```json\n{\n  \"user_id\": 999,\n  \"coach_id\": 1,\n  \"datetime\": \"2025-10-28T09:30:00Z\"\n}\n```\nExpected: 404 \"user not found\"\n\n**Test 2: Coach not found**\n```json\n{\n  \"user_id\": 1,\n  \"coach_id\": 999,\n  \"datetime\": \"2025-10-28T09:30:00Z\"\n}\n```\nExpected: 404 \"coach not found\"\n\n**Test 3: Invalid datetime format**\n```json\n{\n  \"user_id\": 1,\n  \"coach_id\": 1,\n  \"datetime\": \"invalid-date\"\n}\n```\nExpected: 400 Bad Request\n\n**Test 4: Slot outside availability**\n```json\n{\n  \"user_id\": 1,\n  \"coach_id\": 1,\n  \"datetime\": \"2025-10-27T03:00:00Z\"\n}\n```\nExpected: 400 \"slot not within coach availability\"\n\n**Test 5: Already booked**\n- Book same slot twice\nExpected: First 201, Second 409 Conflict\n\n**HTTP Status Codes:**\n- 200: Success (GET, DELETE)\n- 201: Created (POST success)\n- 400: Bad Request (validation failure)\n- 403: Forbidden (permission denied)\n- 404: Not Found (resource missing)\n- 409: Conflict (booking exists)\n- 500: Server Error"
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "coach_id",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "user_id",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "booking_id",
+      "value": "5",
+      "type": "string"
+    }
+  ]
+}
